@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AccessibilityPanel from './AccessibilityPanel';
 import { useSwipeable } from 'react-swipeable'; 
+import Draggable from 'react-draggable';
 import '../../index.css';
 
 const AccessibilityIcon = ({ setDarkMode }) => {
@@ -10,6 +11,9 @@ const AccessibilityIcon = ({ setDarkMode }) => {
   const [position, setPosition] = useState({ x: 4, y: 4 }); // Position initiale fixe
   const [isMobile, setIsMobile] = useState(false);
   const [startTouch, setStartTouch] = useState({ x: 0, y: 0 });
+  const handleDrag = (e, data) => {
+    setPosition({ x: data.x, y: data.y });
+  };
 
   useEffect(() => {
     const userAgent =
@@ -98,18 +102,35 @@ const AccessibilityIcon = ({ setDarkMode }) => {
     document.body.style.fontSize = 'smaller';
     localStorage.setItem('textSize', 'smaller');
   };
-
+  
   return (
-    <div {...handlers} style={{ touchAction: 'none' }}>  
-      <div
-        className="accessibility-icon fixed bottom-4 left-4 bg-blue-500 text-white p-4 rounded-full cursor-pointer z-50 flex items-center justify-center"
-        style={{
-          transform: `translate(${position.x}px, ${position.y}px)`,
-        }}
-        onClick={togglePanel}
-      >
-        <i className="fas fa-universal-access text-2xl"></i>
-      </div>
+    <>
+      {isMobile ? ( // Logique pour mobile
+        <div {...handlers} style={{ touchAction: 'none' }}>
+          <div
+            className="accessibility-icon fixed bg-blue-500 text-white p-4 rounded-full cursor-pointer z-50 flex items-center justify-center"
+            style={{
+              transform: `translate(${position.x}px, ${position.y}px)`,
+            }}
+            onClick={togglePanel}
+          >
+            <i className="fas fa-universal-access text-2xl"></i>
+          </div>
+        </div>
+      ) : ( // Logique pour ordinateur
+        <Draggable onDrag={handleDrag}>
+          <div
+            className="accessibility-icon fixed bg-blue-500 text-white p-4 rounded-full cursor-pointer z-50 flex items-center justify-center"
+            style={{
+              transform: `translate(${position.x}px, ${position.y}px)`,
+            }}
+            onClick={togglePanel}
+          >
+            <i className="fas fa-universal-access text-2xl"></i>
+          </div>
+        </Draggable>
+      )}
+
       {isPanelOpen && (
         <AccessibilityPanel
           onClose={togglePanel}
@@ -121,7 +142,7 @@ const AccessibilityIcon = ({ setDarkMode }) => {
           decreaseTextSize={decreaseTextSize}
         />
       )}
-    </div>
+    </>
   );
 };
 

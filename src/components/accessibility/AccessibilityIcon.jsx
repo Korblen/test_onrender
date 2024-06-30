@@ -7,16 +7,38 @@ const AccessibilityIcon = ({ setDarkMode }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState(null);
 
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ x: 4, y: 4 }); // Position initiale fixe
+  const [isMobile, setIsMobile] = useState(false);
+  const [startTouch, setStartTouch] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const userAgent =
+      typeof window.navigator === "undefined" ? "" : navigator.userAgent;
+    setIsMobile(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent));
+  }, []);
 
   const handlers = useSwipeable({
+    onSwipeStart: (eventData) => {
+      const touch = eventData.event.touches[0];
+      setStartTouch({
+        x: touch.clientX - position.x,
+        y: touch.clientY - position.y,
+      });
+    },
     onSwiping: (eventData) => {
+      const touch = eventData.event.touches[0];
+      const newX = touch.clientX - startTouch.x;
+      const newY = touch.clientY - startTouch.y;
+
+      // Aucune limite de contrôle, position mise à jour directement
       setPosition({
-        x: position.x + eventData.deltaX,
-        y: position.y + eventData.deltaY
+        x: newX,
+        y: newY,
       });
     },
 });
+
+
   useEffect(() => {
     const savedFilter = localStorage.getItem('activeFilter');
     if (savedFilter) {

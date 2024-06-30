@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AccessibilityPanel from './AccessibilityPanel';
+import Draggable, {DraggableCore} from "react-draggable";
 import '../../index.css';
 
 const AccessibilityIcon = ({ setDarkMode }) => {
@@ -68,12 +69,14 @@ const AccessibilityIcon = ({ setDarkMode }) => {
 
   return (
     <>
-      <div
-        className="accessibility-icon fixed bottom-4 left-4 bg-blue-500 text-white p-4 rounded-full cursor-pointer z-50 flex items-center justify-center"
-        onClick={togglePanel}
-      >
-        <i className="fas fa-universal-access text-2xl"></i>
-      </div>
+      <Draggable>
+        <div
+          className="accessibility-icon fixed bottom-4 left-4 bg-blue-500 text-white p-4 rounded-full cursor-pointer z-50 flex items-center justify-center"
+          onClick={togglePanel}
+        >
+          <i className="fas fa-universal-access text-2xl"></i>
+        </div>
+      </Draggable>
       {isPanelOpen && (
         <AccessibilityPanel
           onClose={togglePanel}
